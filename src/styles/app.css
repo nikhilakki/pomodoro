@@ -1,0 +1,475 @@
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--label);
+  background: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ---------- Title bar (traffic-light safe drag region) ---------- */
+
+.titlebar {
+  flex-shrink: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 14px 0 84px; /* left room for macOS traffic lights */
+  -webkit-app-region: drag;
+}
+
+.gear-btn {
+  -webkit-app-region: no-drag;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  display: grid;
+  place-items: center;
+  color: var(--label-secondary);
+  transition: background 0.15s var(--ease-standard), color 0.15s;
+}
+
+.gear-btn:hover {
+  background: var(--fill-tertiary);
+  color: var(--label);
+}
+
+.gear-btn svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* ---------- Stage ---------- */
+
+.stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 0 24px 18px;
+  min-height: 0;
+}
+
+/* ---------- Progress ring + clock ---------- */
+
+.ring-wrap {
+  position: relative;
+  width: 228px;
+  height: 228px;
+  color: var(--phase-color);
+}
+
+.ring {
+  transform: rotate(-90deg);
+  display: block;
+}
+
+.ring circle {
+  fill: none;
+  stroke-width: 13;
+  stroke-linecap: round;
+}
+
+.ring-track {
+  stroke: var(--ring-track);
+}
+
+.ring-progress {
+  stroke: currentColor;
+  transition: stroke-dashoffset 1s linear, stroke 0.3s var(--ease-standard);
+}
+
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.phase-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--label-secondary);
+}
+
+.time {
+  font-family: var(--font-rounded);
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.05;
+  color: var(--label);
+}
+
+.cycle-dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 7px;
+  height: 7px;
+}
+
+.cycle-dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ring-track);
+  transition: background 0.25s var(--ease-standard);
+}
+
+.cycle-dots i.done {
+  background: var(--phase-color);
+}
+
+/* ---------- Segmented control (iOS UISegmentedControl) ---------- */
+
+.segments {
+  display: flex;
+  width: 100%;
+  max-width: 300px;
+  padding: 2px;
+  background: var(--fill-tertiary);
+  border-radius: 9px;
+}
+
+.segments button {
+  flex: 1;
+  padding: 6px 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--label);
+  border-radius: 7px;
+  transition: background 0.18s var(--ease-standard), box-shadow 0.18s;
+}
+
+.segments button.active {
+  background: var(--segment-selected);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14), 0 0.5px 1px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- Controls ---------- */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.btn-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-pill);
+  background: var(--fill-tertiary);
+  color: var(--label);
+  display: grid;
+  place-items: center;
+  transition: transform 0.15s var(--ease-spring), background 0.15s;
+}
+
+.btn-icon:hover {
+  background: var(--fill-quaternary);
+}
+
+.btn-icon:active {
+  transform: scale(0.92);
+}
+
+.btn-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.btn-main {
+  width: 74px;
+  height: 74px;
+  border-radius: var(--radius-pill);
+  background: var(--phase-color);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+  transition: transform 0.15s var(--ease-spring), background 0.25s var(--ease-standard);
+}
+
+.btn-main:active {
+  transform: scale(0.92);
+}
+
+.btn-main svg {
+  width: 30px;
+  height: 30px;
+}
+
+/* ---------- Settings sheet ---------- */
+
+.sheet-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.sheet-root.open {
+  pointer-events: auto;
+}
+
+.sheet-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--sheet-scrim);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-standard);
+}
+
+.sheet-root.open .sheet-scrim {
+  opacity: 1;
+}
+
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: calc(100% - 44px);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-grouped);
+  backdrop-filter: blur(30px) saturate(1.6);
+  -webkit-backdrop-filter: blur(30px) saturate(1.6);
+  border-radius: 16px 16px 0 0;
+  transform: translateY(102%);
+  transition: transform 0.38s var(--ease-spring);
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.25);
+}
+
+.sheet-root.open .sheet {
+  transform: translateY(0);
+}
+
+.sheet-grabber {
+  width: 36px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: var(--label-tertiary);
+  margin: 7px auto 2px;
+  flex-shrink: 0;
+}
+
+.sheet-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 10px;
+  flex-shrink: 0;
+}
+
+.sheet-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.done-btn {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--blue);
+  padding: 4px 8px;
+  border-radius: 7px;
+  transition: background 0.15s;
+}
+
+.done-btn:hover {
+  background: var(--fill-tertiary);
+}
+
+.sheet-scroll {
+  overflow-y: auto;
+  padding: 0 16px 22px;
+}
+
+.group-label {
+  font-size: 13px;
+  color: var(--label-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 18px 16px 6px;
+}
+
+.group {
+  background: var(--bg-cell);
+  border-radius: var(--radius-cell);
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 6px 14px;
+  font-size: 15px;
+  position: relative;
+}
+
+.row + .row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 14px;
+  right: 0;
+  height: 0.5px;
+  background: var(--separator);
+}
+
+/* iOS stepper */
+
+.stepper {
+  display: flex;
+  align-items: center;
+  background: var(--fill-tertiary);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.stepper button {
+  width: 34px;
+  height: 30px;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--blue);
+  display: grid;
+  place-items: center;
+  transition: background 0.12s;
+}
+
+.stepper button:hover {
+  background: var(--fill-quaternary);
+}
+
+.stepper button:disabled {
+  color: var(--label-tertiary);
+}
+
+.stepper .step-val {
+  min-width: 30px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  border-left: 0.5px solid var(--separator);
+  border-right: 0.5px solid var(--separator);
+  line-height: 30px;
+}
+
+/* iOS toggle switch */
+
+.toggle {
+  position: relative;
+  width: 51px;
+  height: 31px;
+  border-radius: var(--radius-pill);
+  background: var(--toggle-off);
+  transition: background 0.25s var(--ease-standard);
+  flex-shrink: 0;
+}
+
+.toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.15);
+  transition: transform 0.25s var(--ease-spring);
+}
+
+.toggle.on {
+  background: var(--green);
+}
+
+.toggle.on::after {
+  transform: translateX(20px);
+}
+
+/* About / link rows */
+
+.row-link {
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.row-link:active {
+  background: var(--fill-quaternary);
+}
+
+.row-value {
+  color: var(--label-secondary);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chevron {
+  color: var(--label-tertiary);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.about-footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--label-tertiary);
+  margin-top: 20px;
+}
+
+/* Phase accents */
+
+.phase-focus {
+  --phase-color: var(--red);
+}
+
+.phase-short_break {
+  --phase-color: var(--green);
+}
+
+.phase-long_break {
+  --phase-color: var(--blue);
+}

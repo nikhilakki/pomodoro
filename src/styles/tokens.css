@@ -1,0 +1,57 @@
+:root {
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Rounded",
+    "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-rounded: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont,
+    "Inter", system-ui, sans-serif;
+
+  /* iOS system colors (light) */
+  --red: #ff3b30;
+  --green: #34c759;
+  --blue: #007aff;
+  --orange: #ff9500;
+
+  /* iOS semantic colors (light) */
+  --label: #000000;
+  --label-secondary: rgba(60, 60, 67, 0.6);
+  --label-tertiary: rgba(60, 60, 67, 0.33);
+  --bg-grouped: rgba(242, 242, 247, 0.72);
+  --bg-cell: rgba(255, 255, 255, 0.85);
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  --fill-quaternary: rgba(116, 116, 128, 0.08);
+  --separator: rgba(60, 60, 67, 0.1);
+  --ring-track: rgba(120, 120, 128, 0.18);
+  --segment-selected: #ffffff;
+  --toggle-off: #e9e9ea;
+  --sheet-scrim: rgba(0, 0, 0, 0.18);
+
+  /* Phase accents */
+  --phase-color: var(--red);
+
+  /* Geometry + motion */
+  --radius-cell: 12px;
+  --radius-pill: 999px;
+  --ease-spring: cubic-bezier(0.25, 1.4, 0.45, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --red: #ff453a;
+    --green: #30d158;
+    --blue: #0a84ff;
+    --orange: #ff9f0a;
+
+    --label: #ffffff;
+    --label-secondary: rgba(235, 235, 245, 0.6);
+    --label-tertiary: rgba(235, 235, 245, 0.33);
+    --bg-grouped: rgba(28, 28, 30, 0.72);
+    --bg-cell: rgba(44, 44, 46, 0.85);
+    --fill-tertiary: rgba(118, 118, 128, 0.24);
+    --fill-quaternary: rgba(116, 116, 128, 0.16);
+    --separator: rgba(84, 84, 88, 0.5);
+    --ring-track: rgba(120, 120, 128, 0.26);
+    --segment-selected: #636366;
+    --toggle-off: #39393d;
+    --sheet-scrim: rgba(0, 0, 0, 0.45);
+  }
+}
