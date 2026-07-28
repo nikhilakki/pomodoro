@@ -1,6 +1,6 @@
 # Distributing Pomodoro
 
-How releases are built and published. For day-to-day app usage, see [README.md](README.md).
+How releases are built and published. For day-to-day app usage, see [README.md](README.md) or the hosted docs at [nikhilakki.github.io/pomodoro-docs](https://nikhilakki.github.io/pomodoro-docs/).
 
 ## GitHub Releases pipeline
 

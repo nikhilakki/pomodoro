@@ -2,7 +2,7 @@
 
 A minimal, iOS-native Pomodoro timer for macOS, Windows, and Linux.
 
-Download the latest build from **[GitHub Releases](https://github.com/nikhilakki/pomodoro/releases)**.
+**Docs:** [nikhilakki.github.io/pomodoro-docs](https://nikhilakki.github.io/pomodoro-docs/) · **Download:** [GitHub Releases](https://github.com/nikhilakki/pomodoro/releases/latest)
 
 ## Install
 
@@ -106,4 +106,6 @@ Everything stays on your device: settings, tasks, and session history (local SQL
 
 ---
 
-Building from source, release pipeline, and packaging: see [DISTRIBUTING.md](DISTRIBUTING.md).
+Full documentation: **[Pomodoro docs](https://nikhilakki.github.io/pomodoro-docs/)** (install, usage, develop, FAQ).
+
+Building from source, release pipeline, and packaging: see [DISTRIBUTING.md](DISTRIBUTING.md) or the [develop section](https://nikhilakki.github.io/pomodoro-docs/develop/setup) of the docs site.
