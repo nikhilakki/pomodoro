@@ -9,11 +9,12 @@ The timer engine lives in Rust (an authoritative state machine on a tokio tick l
 - 🍅 Focus / Short Break / Long Break cycles (25/5/15 by default, long break every 4)
 - ✅ Tasks: add simple todos, start a focus session from a task, track pomodoros used per task
 - 🗄️ Local SQLite history of every session (completed / skipped / stopped), with linked task when set
+- 📈 Sessions view: focus totals, 7-day chart, and recent list (title bar chart icon or Settings → Sessions)
 - ⚠️ Confirm before switching Focus / Short / Long while a timer is running or paused
 - ⏸ Start, pause, resume, skip, reset — from the window **or the menu bar tray**
 - 📊 Live countdown in the macOS menu bar (tray title)
 - 🔔 Native notifications + synthesized chime on phase completion
-- ⚙️ iOS-style settings sheet: durations, auto-start, sound, notifications, session history
+- ⚙️ iOS-style settings sheet: durations, auto-start, sound, notifications, accent, link to sessions
 - 🎨 Accent color picker for the dial and main button (Auto by phase, or a fixed palette)
 - 🌗 Automatic light/dark mode with iOS semantic colors
 - 🪟 Frosted-glass window (NSVisualEffectView on macOS, Acrylic on Windows), close-to-tray
@@ -35,7 +36,7 @@ The timer engine lives in Rust (an authoritative state machine on a tokio tick l
 ├── src/                     # Frontend (vanilla TS)
 │   ├── main.ts              # Bootstrap, event wiring, chime
 │   ├── state.ts             # Client store mirroring the Rust timer
-│   ├── ui/                  # timer-view, controls, segments, settings, todos
+│   ├── ui/                  # timer-view, controls, segments, settings, todos, sessions
 │   └── styles/              # iOS design tokens + app styles
 ├── src-tauri/
 │   ├── src/

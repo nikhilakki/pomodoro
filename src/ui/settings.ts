@@ -1,14 +1,6 @@
 import { getVersion } from "@tauri-apps/api/app";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import {
-  ACCENT_OPTIONS,
-  AccentId,
-  formatElapsed,
-  phaseLabel,
-  SessionRecord,
-  Settings,
-  store,
-} from "../state";
+import { ACCENT_OPTIONS, AccentId, Settings, store } from "../state";
 
 const LINKS = {
   github: "https://github.com/nikhilakki",
@@ -45,72 +37,15 @@ const FEEDBACK_TOGGLES: ToggleDef[] = [
   { key: "notifications", label: "Notifications" },
 ];
 
-function outcomeLabel(outcome: string): string {
-  switch (outcome) {
-    case "completed":
-      return "Done";
-    case "skipped":
-      return "Skipped";
-    case "aborted":
-      return "Stopped";
-    default:
-      return outcome;
-  }
-}
-
-function formatWhen(ms: number): string {
-  const d = new Date(ms);
-  const now = new Date();
-  const sameDay =
-    d.getFullYear() === now.getFullYear() &&
-    d.getMonth() === now.getMonth() &&
-    d.getDate() === now.getDate();
-  const time = d.toLocaleTimeString(undefined, {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-  if (sameDay) return time;
-  return `${d.toLocaleDateString(undefined, { month: "short", day: "numeric" })} · ${time}`;
-}
-
-function sessionRow(s: SessionRecord): string {
-  const task =
-    s.todo_title?.trim() ||
-    (s.phase === "focus" ? "No task" : "—");
-  const phase = phaseLabel(s.phase as "focus" | "short_break" | "long_break");
-  return `
-    <div class="history-row">
-      <div class="history-main">
-        <span class="history-phase">${phase}</span>
-        <span class="history-task"></span>
-      </div>
-      <div class="history-meta">
-        <span class="history-when">${formatWhen(s.ended_at)}</span>
-        <span class="history-stats">${formatElapsed(s.elapsed_ms)} · ${outcomeLabel(s.outcome)}</span>
-      </div>
-    </div>`.replace(
-    // title set via textContent after insert for safety — placeholder
-    '<span class="history-task"></span>',
-    `<span class="history-task">${escapeHtml(task)}</span>`,
-  );
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 export class SettingsPanel {
   private rootEl: HTMLElement;
   private isOpen = false;
-  private historyEl: HTMLElement | null = null;
-  private historyCountEl: HTMLElement | null = null;
+  private sessionsCountEl: HTMLElement | null = null;
+  private onOpenSessions: (() => void) | null = null;
 
-  constructor(root: HTMLElement) {
+  constructor(root: HTMLElement, onOpenSessions?: () => void) {
     this.rootEl = root;
+    this.onOpenSessions = onOpenSessions ?? null;
     this.rootEl.className = "sheet-root";
     this.render();
 
@@ -175,9 +110,12 @@ export class SettingsPanel {
               <div class="accent-hint">Colors the progress dial and the start/pause button. Auto follows Focus / Short / Long.</div>
             </div>
           </div>
-          <div class="group-label">Session history <span class="history-count" id="history-count"></span></div>
-          <div class="group history-group" id="history-list">
-            <div class="history-empty">Loading…</div>
+          <div class="group-label">History</div>
+          <div class="group">
+            <div class="row row-link" id="open-sessions-row" role="button" tabindex="0">
+              <span>Sessions</span>
+              <span class="row-value"><span id="sessions-count"></span> <span class="chevron">›</span></span>
+            </div>
           </div>
           <div class="group-label">About</div>
           <div class="group">
@@ -202,8 +140,7 @@ export class SettingsPanel {
         </div>
       </div>`;
 
-    this.historyEl = this.rootEl.querySelector("#history-list");
-    this.historyCountEl = this.rootEl.querySelector("#history-count");
+    this.sessionsCountEl = this.rootEl.querySelector("#sessions-count");
 
     getVersion()
       .then((v) => {
@@ -211,6 +148,19 @@ export class SettingsPanel {
         if (el) el.textContent = v;
       })
       .catch(() => {});
+
+    const openSessionsRow = this.rootEl.querySelector<HTMLElement>("#open-sessions-row");
+    openSessionsRow?.addEventListener("click", () => {
+      this.close();
+      this.onOpenSessions?.();
+    });
+    openSessionsRow?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        this.close();
+        this.onOpenSessions?.();
+      }
+    });
 
     this.rootEl.querySelectorAll<HTMLElement>(".row-link").forEach((el) => {
       el.addEventListener("click", () => {
@@ -252,32 +202,20 @@ export class SettingsPanel {
     });
   }
 
-  private async refreshHistory(): Promise<void> {
-    if (!this.historyEl) return;
+  private async refreshSessionsCount(): Promise<void> {
+    if (!this.sessionsCountEl) return;
     try {
-      const [sessions, count] = await Promise.all([
-        store.listSessions(40),
-        store.sessionCount(),
-      ]);
-      if (this.historyCountEl) {
-        this.historyCountEl.textContent = count > 0 ? `(${count})` : "";
-      }
-      if (sessions.length === 0) {
-        this.historyEl.innerHTML =
-          `<div class="history-empty">Completed, skipped, and stopped sessions are saved here with any linked task.</div>`;
-        return;
-      }
-      this.historyEl.innerHTML = sessions.map(sessionRow).join("");
+      const count = await store.sessionCount();
+      this.sessionsCountEl.textContent = count > 0 ? String(count) : "";
     } catch {
-      this.historyEl.innerHTML =
-        `<div class="history-empty">Could not load session history.</div>`;
+      this.sessionsCountEl.textContent = "";
     }
   }
 
   open(): void {
     this.isOpen = true;
     this.rootEl.classList.add("open");
-    void this.refreshHistory();
+    void this.refreshSessionsCount();
   }
 
   close(): void {
