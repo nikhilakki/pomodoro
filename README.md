@@ -119,7 +119,17 @@ Then open **GitHub → Releases → draft** and publish. Users download the inst
 
 ### Notes
 
-- **macOS Gatekeeper**: unsigned builds require right-click → *Open* on first launch. For seamless installs, add `APPLE_CERTIFICATE`, `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY`, `APPLE_ID`, `APPLE_PASSWORD`, `APPLE_TEAM_ID` secrets and tauri-action will sign + notarize automatically.
+- **macOS Gatekeeper (“damaged and can’t be opened”)**: this build is **not Apple-notarized**, so macOS often marks the download as quarantined and shows a false “damaged” error. After installing, clear the flag once:
+  ```bash
+  # if you dragged the app to Applications:
+  xattr -cr /Applications/Pomodoro.app
+
+  # or if you opened the .app from the DMG / Downloads:
+  xattr -cr ~/Downloads/Pomodoro.app
+  ```
+  Then open Pomodoro normally. Right-click → Open is not enough for this message.
+
+  For seamless installs without `xattr`, add Apple signing + notarization secrets (`APPLE_CERTIFICATE`, `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY`, `APPLE_ID`, `APPLE_PASSWORD`, `APPLE_TEAM_ID`) so tauri-action can sign and notarize automatically.
 - **Windows**: consider adding an EV/OV code-signing cert via `WINDOWS_CERTIFICATE` secrets to avoid SmartScreen warnings.
 - The workflow needs no extra secrets beyond the default `GITHUB_TOKEN` (permissions: `contents: write`, already declared in the workflow file).
 
