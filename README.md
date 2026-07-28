@@ -1,137 +1,100 @@
 # Pomodoro
 
-A minimal, iOS-native-looking Pomodoro timer for macOS, Windows, and Linux — built with **Tauri v2** (Rust core) and a vanilla TypeScript frontend.
+A minimal, iOS-native Pomodoro timer for macOS, Windows, and Linux.
 
-The timer engine lives in Rust (an authoritative state machine on a tokio tick loop), so the countdown never drifts or throttles when the window is hidden. The UI renders iOS design language: SF typography, system colors, frosted-glass vibrancy, segmented controls, and a bottom-sheet settings panel.
+Download the latest build from **[GitHub Releases](https://github.com/nikhilakki/pomodoro/releases)**.
 
-## Features
+## Install
 
-- 🍅 Focus / Short Break / Long Break cycles (25/5/15 by default, long break every 4)
-- ✅ Tasks: add simple todos, start a focus session from a task, track pomodoros used per task
-- 🗄️ Local SQLite history of every session (completed / skipped / stopped), with linked task when set
-- 📈 Sessions view: focus totals, 7-day chart, and recent list (title bar chart icon or Settings → Sessions)
-- ⚠️ Confirm before switching Focus / Short / Long while a timer is running or paused
-- ⏸ Start, pause, resume, skip, reset — from the window **or the menu bar tray**
-- 📊 Live countdown in the macOS menu bar (tray title)
-- 🔔 Native notifications + synthesized chime on phase completion
-- ⚙️ iOS-style settings sheet: durations, auto-start, sound, notifications, accent, link to sessions
-- 🎨 Accent color picker for the dial and main button (Auto by phase, or a fixed palette)
-- 🌗 Automatic light/dark mode with iOS semantic colors
-- 🪟 Frosted-glass window (NSVisualEffectView on macOS, Acrylic on Windows), close-to-tray
-- ⌨️ Keyboard: `Space` start/pause, `⌘,` settings, `Esc` close sheet
+1. Open the [latest release](https://github.com/nikhilakki/pomodoro/releases/latest).
+2. Download the installer for your OS and CPU:
 
-## Tech stack
+   | Platform | Arch | Typical file |
+   | -------- | ---- | ------------ |
+   | macOS | Apple Silicon (M1–M4) | `…_aarch64.dmg` |
+   | macOS | Intel | `…_x64.dmg` |
+   | Windows | amd64 | `…_x64-setup.exe` or `…_x64_en-US.msi` |
+   | Windows | arm64 | `…_arm64-setup.exe` or `…_arm64_en-US.msi` |
+   | Linux | amd64 | `…_amd64.AppImage` / `.deb` / `.rpm` |
+   | Linux | arm64 | `…_aarch64.AppImage` / `…_arm64.deb` / `.rpm` |
 
-| Layer    | Tech                                                              |
-| -------- | ----------------------------------------------------------------- |
-| Core     | Rust, tokio, Tauri v2, rusqlite (bundled)                         |
-| Plugins  | notification, store, opener, tray-icon, window-vibrancy           |
-| Frontend | Vanilla TypeScript, Vite (zero framework)                         |
-| Storage  | Settings/todos JSON store; session history in local SQLite        |
-| Tests    | `cargo test` — timer state machine, todos, session DB             |
+3. Install and open the app.
 
-## Project structure
+### macOS Gatekeeper
 
-```
-├── src/                     # Frontend (vanilla TS)
-│   ├── main.ts              # Bootstrap, event wiring, chime
-│   ├── state.ts             # Client store mirroring the Rust timer
-│   ├── ui/                  # timer-view, controls, segments, settings, todos, sessions
-│   └── styles/              # iOS design tokens + app styles
-├── src-tauri/
-│   ├── src/
-│   │   ├── main.rs          # Setup, plugins, tick loop, vibrancy
-│   │   ├── timer.rs         # Timer state machine (unit-tested)
-│   │   ├── todos.rs         # Task list + per-task pomodoro counts
-│   │   ├── db.rs / sessions.rs  # SQLite session history
-│   │   ├── commands.rs      # IPC commands shared by UI + tray
-│   │   └── tray.rs          # Menu bar icon, title, menu
-│   ├── capabilities/        # Tauri v2 permissions
-│   └── tauri.conf.json
-└── .github/workflows/       # Release pipeline (GitHub Releases)
-```
-
-## Run locally
-
-### Prerequisites
-
-- **Rust** (stable, via [rustup](https://rustup.rs))
-- **Node.js 20+** and **pnpm** (`npm i -g pnpm`)
-- **macOS**: Xcode Command Line Tools (`xcode-select --install`)
-- **Windows**: [WebView2](https://developer.microsoft.com/microsoft-edge/webview2/) (preinstalled on Win11) + MSVC Build Tools
-- **Linux** (Debian/Ubuntu):
-  ```bash
-  sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libxdo-dev libssl-dev
-  ```
-
-### Develop
+Unsigned downloads may show **“Pomodoro is damaged and can’t be opened.”** The app is not damaged — clear the quarantine flag once:
 
 ```bash
-git clone https://github.com/nikhilakki/pomodoro.git
-cd pomodoro
-pnpm install
-pnpm tauri dev
+xattr -cr /Applications/Pomodoro.app
 ```
 
-This starts Vite on `:1420` and opens the app with hot-reload for the frontend; Rust changes restart the app automatically.
+Then open Pomodoro from Applications.
 
-### Test
+### Windows SmartScreen
+
+You may see a SmartScreen warning. Choose **More info** → **Run anyway** if you trust the release.
+
+### Linux AppImage
 
 ```bash
-cd src-tauri && cargo test    # timer state machine unit tests
+chmod +x Pomodoro_*.AppImage
+./Pomodoro_*.AppImage
 ```
 
-## Build binaries locally
+## What you can do
 
-```bash
-pnpm tauri build
-```
+- Run **Focus**, **Short Break**, and **Long Break** cycles (defaults 25 / 5 / 15 minutes; long break every 4 focus sessions)
+- **Tasks** — add todos, start a focus session from a task, track pomodoros per task
+- **Sessions** — view focus totals, a 7-day chart, and recent history (chart icon in the title bar, or **Settings → Sessions**)
+- Control the timer from the window or the **menu bar tray**
+- Get a notification and optional chime when a phase finishes
+- Pick an **accent color** for the dial and main button (or Auto by phase)
+- Use light or dark mode (follows system)
 
-Outputs land in `src-tauri/target/release/bundle/`:
+## Using the app
 
-| Platform | Artifact                    |
-| -------- | --------------------------- |
-| macOS    | `.app`, `.dmg`              |
-| Windows  | `.msi`, `.exe` (NSIS)       |
-| Linux    | `.AppImage`, `.deb`         |
+### Timer
 
-Cross-compiling desktop OSes is not supported — build on the target OS (or let CI do it, see below).
+1. Choose **Focus**, **Short**, or **Long** at the bottom of the dial.
+2. Press the main button (or **Space**) to start / pause.
+3. Use skip to jump to the next phase, or reset to restart the current one.
+4. If a timer is running or paused, switching mode asks for confirmation first.
 
-## Distribution via GitHub Releases
+### Tasks
 
-The repo ships a release pipeline at [`.github/workflows/release.yml`](.github/workflows/release.yml). It builds signed-optional installers for **macOS (arm64 + x86_64), Windows (x86_64 + arm64), and Linux (x86_64 + arm64)** and attaches them to a GitHub Release.
+1. Open **Tasks** (list icon in the title bar).
+2. Add a task, then press play on a row to start Focus on that task.
+3. Finished Focus sessions count toward that task’s pomodoro total.
+4. The active task appears under the dial while set.
 
-### How it works
+### Sessions history
 
-1. The workflow triggers on version tags (`v*`) or manually via *Actions → Release → Run workflow*.
-2. [`tauri-apps/tauri-action`](https://github.com/tauri-apps/tauri-action) builds each platform on its native runner and collects the bundles.
-3. A **draft release** is created with all artifacts attached — review it, edit notes, then publish.
+1. Open **Sessions** (chart icon in the title bar).
+2. Check **Focus done**, total focus time, and last-7-days count.
+3. Use the bar chart for daily focus counts; scroll for the full recent list (completed, skipped, stopped).
 
-### Cut a release
+### Settings
 
-```bash
-# 1. bump version in package.json AND src-tauri/tauri.conf.json, then commit
-git tag v0.2.0
-git push origin v0.2.0
-```
+Open **Settings** (gear icon, or **⌘,** on macOS):
 
-Then open **GitHub → Releases → draft** and publish. Users download the installer for their OS directly from the release page.
+- Focus / short break / long break lengths
+- Long break every *N* focus sessions
+- Auto-start breaks or focus
+- Completion chime and notifications
+- Accent color
+- Link to Sessions history
 
-### Notes
+## Keyboard
 
-- **macOS Gatekeeper (“damaged and can’t be opened”)**: this build is **not Apple-notarized**, so macOS often marks the download as quarantined and shows a false “damaged” error. After installing, clear the flag once:
-  ```bash
-  # if you dragged the app to Applications:
-  xattr -cr /Applications/Pomodoro.app
+| Shortcut | Action |
+| -------- | ------ |
+| `Space` | Start / pause (when no sheet is open) |
+| `⌘,` | Open Settings (macOS) |
+| `Esc` | Close Settings, Tasks, or Sessions |
 
-  # or if you opened the .app from the DMG / Downloads:
-  xattr -cr ~/Downloads/Pomodoro.app
-  ```
-  Then open Pomodoro normally. Right-click → Open is not enough for this message.
+## Privacy
 
-  For seamless installs without `xattr`, add Apple signing + notarization secrets (`APPLE_CERTIFICATE`, `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY`, `APPLE_ID`, `APPLE_PASSWORD`, `APPLE_TEAM_ID`) so tauri-action can sign and notarize automatically.
-- **Windows**: consider adding an EV/OV code-signing cert via `WINDOWS_CERTIFICATE` secrets to avoid SmartScreen warnings.
-- The workflow needs no extra secrets beyond the default `GITHUB_TOKEN` (permissions: `contents: write`, already declared in the workflow file).
+Everything stays on your device: settings, tasks, and session history (local SQLite). No account and no cloud sync.
 
 ## Author
 
@@ -140,3 +103,7 @@ Then open **GitHub → Releases → draft** and publish. Users download the inst
 ## License
 
 [MIT](LICENSE) © 2026 nikhilakki
+
+---
+
+Building from source, release pipeline, and packaging: see [DISTRIBUTING.md](DISTRIBUTING.md).
