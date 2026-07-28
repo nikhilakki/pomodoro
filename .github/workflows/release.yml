@@ -15,16 +15,30 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # macOS — Apple Silicon + Intel
           - os: macos-latest
             target: aarch64-apple-darwin
+            name: macOS arm64
           - os: macos-latest
             target: x86_64-apple-darwin
+            name: macOS x86_64
+          # Windows — amd64 + arm64
           - os: windows-latest
             target: x86_64-pc-windows-msvc
+            name: Windows x86_64
+          - os: windows-11-arm
+            target: aarch64-pc-windows-msvc
+            name: Windows arm64
+          # Linux — amd64 + arm64
           - os: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
+            name: Linux x86_64
+          - os: ubuntu-22.04-arm
+            target: aarch64-unknown-linux-gnu
+            name: Linux arm64
 
     runs-on: ${{ matrix.os }}
+    name: Build ${{ matrix.name }}
 
     steps:
       - name: Checkout
@@ -48,9 +62,10 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri -> target
+          key: ${{ matrix.target }}
 
       - name: Install Linux system dependencies
-        if: matrix.os == 'ubuntu-22.04'
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -72,6 +87,34 @@ jobs:
           args: --target ${{ matrix.target }}
           tagName: ${{ github.ref_name }}
           releaseName: "Pomodoro v__VERSION__"
-          releaseBody: "See the assets below to download the installer for your platform."
+          releaseBody: |
+            Minimal Pomodoro timer for macOS, Windows, and Linux — Tauri v2 + Rust, iOS-native UI.
+
+            ## Highlights
+            - Focus / Short Break / Long Break cycles with tray controls
+            - Tasks with per-task pomodoro counts
+            - Local SQLite session history and Sessions view (stats + 7-day chart)
+            - Accent colors for dial and main button
+            - Confirm before switching modes while a timer is active
+            - Native notifications, completion chime, light/dark mode
+
+            ## Downloads
+            Pick the installer for your OS and CPU:
+
+            | Platform | Arch | Typical file |
+            | -------- | ---- | ------------ |
+            | macOS | Apple Silicon (arm64) | `.dmg` / `.app` |
+            | macOS | Intel (x86_64) | `.dmg` / `.app` |
+            | Windows | amd64 (x86_64) | `.msi` / `.exe` |
+            | Windows | arm64 | `.msi` / `.exe` |
+            | Linux | amd64 (x86_64) | `.AppImage` / `.deb` |
+            | Linux | arm64 | `.AppImage` / `.deb` |
+
+            ### Notes
+            - **macOS (unsigned):** first open may require right-click → Open (Gatekeeper).
+            - **Windows:** SmartScreen may warn on unsigned builds; choose “More info” → Run anyway if needed.
+            - Session data stays local (SQLite under the app data directory).
+
+            Full write-up: see [README](https://github.com/nikhilakki/pomodoro#readme).
           releaseDraft: true
           prerelease: false

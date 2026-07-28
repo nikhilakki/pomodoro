@@ -99,7 +99,7 @@ Cross-compiling desktop OSes is not supported — build on the target OS (or let
 
 ## Distribution via GitHub Releases
 
-The repo ships a release pipeline at [`.github/workflows/release.yml`](.github/workflows/release.yml). It builds signed-optional installers for **macOS (Apple Silicon + Intel), Windows, and Linux** and attaches them to a GitHub Release.
+The repo ships a release pipeline at [`.github/workflows/release.yml`](.github/workflows/release.yml). It builds signed-optional installers for **macOS (arm64 + x86_64), Windows (x86_64 + arm64), and Linux (x86_64 + arm64)** and attaches them to a GitHub Release.
 
 ### How it works
 
