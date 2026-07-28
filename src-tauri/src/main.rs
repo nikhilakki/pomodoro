@@ -1,17 +1,26 @@
 mod commands;
+mod db;
+mod sessions;
 mod timer;
+mod todos;
 mod tray;
 
+use db::OpenSession;
+use rusqlite::Connection;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_notification::NotificationExt;
 use tauri_plugin_store::StoreExt;
 use timer::{Effect, Event, Phase, Settings, Timer};
+use todos::TodoState;
 
 pub struct AppState {
     pub timer: Mutex<Timer>,
     pub settings: Mutex<Settings>,
+    pub todos: Mutex<TodoState>,
+    pub db: Mutex<Connection>,
+    pub open_session: Mutex<Option<OpenSession>>,
 }
 
 fn main() {
@@ -19,10 +28,6 @@ fn main() {
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_opener::init())
-        .manage(AppState {
-            timer: Mutex::new(Timer::new()),
-            settings: Mutex::new(Settings::default()),
-        })
         .invoke_handler(tauri::generate_handler![
             commands::start_timer,
             commands::pause_timer,
@@ -34,8 +39,32 @@ fn main() {
             commands::get_timer_state,
             commands::get_settings,
             commands::set_settings,
+            commands::get_todos,
+            commands::add_todo,
+            commands::delete_todo,
+            commands::set_todo_completed,
+            commands::set_active_todo,
+            commands::start_todo,
+            commands::list_sessions,
+            commands::session_count,
         ])
         .setup(|app| {
+            // Open local SQLite database under the app data directory.
+            let db_path = app
+                .path()
+                .app_data_dir()
+                .map_err(|e| e.to_string())?
+                .join("pomodoro.db");
+            let conn = db::open(&db_path).map_err(|e| e.to_string())?;
+
+            app.manage(AppState {
+                timer: Mutex::new(Timer::new()),
+                settings: Mutex::new(Settings::default()),
+                todos: Mutex::new(TodoState::default()),
+                db: Mutex::new(conn),
+                open_session: Mutex::new(None),
+            });
+
             // Restore persisted settings.
             if let Ok(store) = app.store("settings.json") {
                 if let Some(value) = store.get("settings") {
@@ -43,6 +72,12 @@ fn main() {
                         *app.state::<AppState>().settings.lock().unwrap() = saved;
                     }
                 }
+            }
+
+            // Restore persisted todos.
+            {
+                let loaded = todos::load_from_store(app.handle());
+                *app.state::<AppState>().todos.lock().unwrap() = loaded;
             }
 
             let _ = app.notification().request_permission();
@@ -96,7 +131,7 @@ fn spawn_tick_loop(app: AppHandle) {
             interval.tick().await;
 
             let state = app.state::<AppState>();
-            let (snapshot, effect, notifications_on) = {
+            let (snapshot, effect, notifications_on, settings_clone) = {
                 let mut timer = state.timer.lock().unwrap();
                 let settings = state.settings.lock().unwrap();
                 let effect = timer.apply(Event::Tick, &settings, Instant::now());
@@ -104,6 +139,7 @@ fn spawn_tick_loop(app: AppHandle) {
                     timer.snapshot(&settings, Instant::now()),
                     effect,
                     settings.notifications,
+                    settings.clone(),
                 )
             };
 
@@ -115,7 +151,23 @@ fn spawn_tick_loop(app: AppHandle) {
 
             let _ = app.emit("timer://tick", &snapshot);
 
-            if let Some(Effect::PhaseCompleted { to, .. }) = effect {
+            if let Some(Effect::PhaseCompleted {
+                from,
+                to,
+                auto_started,
+            }) = effect
+            {
+                {
+                    let timer = state.timer.lock().unwrap();
+                    sessions::on_phase_completed(
+                        &app,
+                        from,
+                        auto_started,
+                        &timer,
+                        &settings_clone,
+                    );
+                }
+
                 if notifications_on {
                     let (title, body) = match to {
                         Phase::Focus => ("Break over", "Time to focus."),

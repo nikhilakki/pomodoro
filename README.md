@@ -7,10 +7,13 @@ The timer engine lives in Rust (an authoritative state machine on a tokio tick l
 ## Features
 
 - 🍅 Focus / Short Break / Long Break cycles (25/5/15 by default, long break every 4)
+- ✅ Tasks: add simple todos, start a focus session from a task, track pomodoros used per task
+- 🗄️ Local SQLite history of every session (completed / skipped / stopped), with linked task when set
+- ⚠️ Confirm before switching Focus / Short / Long while a timer is running or paused
 - ⏸ Start, pause, resume, skip, reset — from the window **or the menu bar tray**
 - 📊 Live countdown in the macOS menu bar (tray title)
 - 🔔 Native notifications + synthesized chime on phase completion
-- ⚙️ iOS-style settings sheet: durations, auto-start behavior, sound, notifications (persisted across launches)
+- ⚙️ iOS-style settings sheet: durations, auto-start, sound, notifications, session history
 - 🌗 Automatic light/dark mode with iOS semantic colors
 - 🪟 Frosted-glass window (NSVisualEffectView on macOS, Acrylic on Windows), close-to-tray
 - ⌨️ Keyboard: `Space` start/pause, `⌘,` settings, `Esc` close sheet
@@ -19,10 +22,11 @@ The timer engine lives in Rust (an authoritative state machine on a tokio tick l
 
 | Layer    | Tech                                                              |
 | -------- | ----------------------------------------------------------------- |
-| Core     | Rust, tokio, Tauri v2                                             |
+| Core     | Rust, tokio, Tauri v2, rusqlite (bundled)                         |
 | Plugins  | notification, store, opener, tray-icon, window-vibrancy           |
-| Frontend | Vanilla TypeScript, Vite (≈12 KB JS + 7 KB CSS, zero framework)   |
-| Tests    | `cargo test` — 11 unit tests on the timer state machine           |
+| Frontend | Vanilla TypeScript, Vite (zero framework)                         |
+| Storage  | Settings/todos JSON store; session history in local SQLite        |
+| Tests    | `cargo test` — timer state machine, todos, session DB             |
 
 ## Project structure
 
@@ -30,12 +34,14 @@ The timer engine lives in Rust (an authoritative state machine on a tokio tick l
 ├── src/                     # Frontend (vanilla TS)
 │   ├── main.ts              # Bootstrap, event wiring, chime
 │   ├── state.ts             # Client store mirroring the Rust timer
-│   ├── ui/                  # timer-view, controls, segments, settings
+│   ├── ui/                  # timer-view, controls, segments, settings, todos
 │   └── styles/              # iOS design tokens + app styles
 ├── src-tauri/
 │   ├── src/
 │   │   ├── main.rs          # Setup, plugins, tick loop, vibrancy
 │   │   ├── timer.rs         # Timer state machine (unit-tested)
+│   │   ├── todos.rs         # Task list + per-task pomodoro counts
+│   │   ├── db.rs / sessions.rs  # SQLite session history
 │   │   ├── commands.rs      # IPC commands shared by UI + tray
 │   │   └── tray.rs          # Menu bar icon, title, menu
 │   ├── capabilities/        # Tauri v2 permissions

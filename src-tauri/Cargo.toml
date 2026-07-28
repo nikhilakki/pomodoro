@@ -17,6 +17,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["time"] }
 window-vibrancy = "0.6"
+rusqlite = { version = "0.32", features = ["bundled"] }
 
 [profile.dev]
 incremental = true

@@ -1,6 +1,12 @@
 import { getVersion } from "@tauri-apps/api/app";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { Settings, store } from "../state";
+import {
+  formatElapsed,
+  phaseLabel,
+  SessionRecord,
+  Settings,
+  store,
+} from "../state";
 
 const LINKS = {
   github: "https://github.com/nikhilakki",
@@ -37,9 +43,69 @@ const FEEDBACK_TOGGLES: ToggleDef[] = [
   { key: "notifications", label: "Notifications" },
 ];
 
+function outcomeLabel(outcome: string): string {
+  switch (outcome) {
+    case "completed":
+      return "Done";
+    case "skipped":
+      return "Skipped";
+    case "aborted":
+      return "Stopped";
+    default:
+      return outcome;
+  }
+}
+
+function formatWhen(ms: number): string {
+  const d = new Date(ms);
+  const now = new Date();
+  const sameDay =
+    d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() &&
+    d.getDate() === now.getDate();
+  const time = d.toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+  if (sameDay) return time;
+  return `${d.toLocaleDateString(undefined, { month: "short", day: "numeric" })} · ${time}`;
+}
+
+function sessionRow(s: SessionRecord): string {
+  const task =
+    s.todo_title?.trim() ||
+    (s.phase === "focus" ? "No task" : "—");
+  const phase = phaseLabel(s.phase as "focus" | "short_break" | "long_break");
+  return `
+    <div class="history-row">
+      <div class="history-main">
+        <span class="history-phase">${phase}</span>
+        <span class="history-task"></span>
+      </div>
+      <div class="history-meta">
+        <span class="history-when">${formatWhen(s.ended_at)}</span>
+        <span class="history-stats">${formatElapsed(s.elapsed_ms)} · ${outcomeLabel(s.outcome)}</span>
+      </div>
+    </div>`.replace(
+    // title set via textContent after insert for safety — placeholder
+    '<span class="history-task"></span>',
+    `<span class="history-task">${escapeHtml(task)}</span>`,
+  );
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 export class SettingsPanel {
   private rootEl: HTMLElement;
   private isOpen = false;
+  private historyEl: HTMLElement | null = null;
+  private historyCountEl: HTMLElement | null = null;
 
   constructor(root: HTMLElement) {
     this.rootEl = root;
@@ -93,6 +159,10 @@ export class SettingsPanel {
           <div class="group">${toggleRows(BEHAVIOR_TOGGLES)}</div>
           <div class="group-label">Feedback</div>
           <div class="group">${toggleRows(FEEDBACK_TOGGLES)}</div>
+          <div class="group-label">Session history <span class="history-count" id="history-count"></span></div>
+          <div class="group history-group" id="history-list">
+            <div class="history-empty">Loading…</div>
+          </div>
           <div class="group-label">About</div>
           <div class="group">
             <div class="row">
@@ -115,6 +185,9 @@ export class SettingsPanel {
           <div class="about-footer">Made with Tauri &amp; Rust</div>
         </div>
       </div>`;
+
+    this.historyEl = this.rootEl.querySelector("#history-list");
+    this.historyCountEl = this.rootEl.querySelector("#history-count");
 
     getVersion()
       .then((v) => {
@@ -155,9 +228,32 @@ export class SettingsPanel {
     });
   }
 
+  private async refreshHistory(): Promise<void> {
+    if (!this.historyEl) return;
+    try {
+      const [sessions, count] = await Promise.all([
+        store.listSessions(40),
+        store.sessionCount(),
+      ]);
+      if (this.historyCountEl) {
+        this.historyCountEl.textContent = count > 0 ? `(${count})` : "";
+      }
+      if (sessions.length === 0) {
+        this.historyEl.innerHTML =
+          `<div class="history-empty">Completed, skipped, and stopped sessions are saved here with any linked task.</div>`;
+        return;
+      }
+      this.historyEl.innerHTML = sessions.map(sessionRow).join("");
+    } catch {
+      this.historyEl.innerHTML =
+        `<div class="history-empty">Could not load session history.</div>`;
+    }
+  }
+
   open(): void {
     this.isOpen = true;
     this.rootEl.classList.add("open");
+    void this.refreshHistory();
   }
 
   close(): void {
