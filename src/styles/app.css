@@ -43,18 +43,16 @@ button {
   align-items: center;
   justify-content: flex-end;
   padding: 0 14px 0 84px; /* left room for macOS traffic lights */
-  -webkit-app-region: drag;
+  cursor: default;
 }
 
 .titlebar-actions {
   display: flex;
   align-items: center;
   gap: 4px;
-  -webkit-app-region: no-drag;
 }
 
 .gear-btn {
-  -webkit-app-region: no-drag;
   width: 28px;
   height: 28px;
   border-radius: var(--radius-pill);
@@ -84,6 +82,8 @@ button {
   justify-content: space-evenly;
   padding: 0 24px 18px;
   min-height: 0;
+  /* Empty stage space is a window drag region (data-tauri-drag-region="deep"). */
+  cursor: default;
 }
 
 /* ---------- Progress ring + clock ---------- */

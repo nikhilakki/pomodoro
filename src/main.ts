@@ -46,14 +46,14 @@ function chime(): void {
 async function bootstrap(): Promise<void> {
   const app = document.getElementById("app")!;
   app.innerHTML = `
-    <div class="titlebar">
+    <div class="titlebar" data-tauri-drag-region>
       <div class="titlebar-actions">
         <button class="gear-btn list-btn" aria-label="Tasks">${LIST_ICON}</button>
         <button class="gear-btn sessions-btn" aria-label="Sessions">${SESSIONS_ICON}</button>
         <button class="gear-btn settings-btn" aria-label="Settings">${GEAR_ICON}</button>
       </div>
     </div>
-    <div class="stage">
+    <div class="stage" data-tauri-drag-region="deep">
       <div class="ring-wrap phase-focus"></div>
       <div class="active-task-host"></div>
       <div class="segments"></div>
