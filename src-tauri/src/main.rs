@@ -68,7 +68,8 @@ fn main() {
             // Restore persisted settings.
             if let Ok(store) = app.store("settings.json") {
                 if let Some(value) = store.get("settings") {
-                    if let Ok(saved) = serde_json::from_value::<Settings>(value.clone()) {
+                    if let Ok(mut saved) = serde_json::from_value::<Settings>(value.clone()) {
+                        saved.sanitize();
                         *app.state::<AppState>().settings.lock().unwrap() = saved;
                     }
                 }

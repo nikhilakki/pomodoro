@@ -6,9 +6,17 @@
 
   /* iOS system colors (light) */
   --red: #ff3b30;
-  --green: #34c759;
-  --blue: #007aff;
   --orange: #ff9500;
+  --yellow: #ffcc00;
+  --green: #34c759;
+  --mint: #00c7be;
+  --teal: #30b0c7;
+  --cyan: #32ade6;
+  --blue: #007aff;
+  --indigo: #5856d6;
+  --purple: #af52de;
+  --pink: #ff2d55;
+  --brown: #a2845e;
 
   /* iOS semantic colors (light) */
   --label: #000000;
@@ -37,9 +45,17 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --red: #ff453a;
-    --green: #30d158;
-    --blue: #0a84ff;
     --orange: #ff9f0a;
+    --yellow: #ffd60a;
+    --green: #30d158;
+    --mint: #63e6e2;
+    --teal: #40c8e0;
+    --cyan: #64d2ff;
+    --blue: #0a84ff;
+    --indigo: #5e5ce6;
+    --purple: #bf5af2;
+    --pink: #ff375f;
+    --brown: #ac8e68;
 
     --label: #ffffff;
     --label-secondary: rgba(235, 235, 245, 0.6);

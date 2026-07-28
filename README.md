@@ -14,6 +14,7 @@ The timer engine lives in Rust (an authoritative state machine on a tokio tick l
 - 📊 Live countdown in the macOS menu bar (tray title)
 - 🔔 Native notifications + synthesized chime on phase completion
 - ⚙️ iOS-style settings sheet: durations, auto-start, sound, notifications, session history
+- 🎨 Accent color picker for the dial and main button (Auto by phase, or a fixed palette)
 - 🌗 Automatic light/dark mode with iOS semantic colors
 - 🪟 Frosted-glass window (NSVisualEffectView on macOS, Acrylic on Windows), close-to-tray
 - ⌨️ Keyboard: `Space` start/pause, `⌘,` settings, `Esc` close sheet

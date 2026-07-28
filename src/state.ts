@@ -13,6 +13,41 @@ export interface TimerSnapshot {
   long_break_every: number;
 }
 
+/** Predefined accent keys for dial + main button. `"auto"` = by phase. */
+export type AccentId =
+  | "auto"
+  | "red"
+  | "orange"
+  | "yellow"
+  | "green"
+  | "mint"
+  | "teal"
+  | "cyan"
+  | "blue"
+  | "indigo"
+  | "purple"
+  | "pink"
+  | "brown";
+
+export const ACCENT_OPTIONS: ReadonlyArray<{
+  id: AccentId;
+  label: string;
+}> = [
+  { id: "auto", label: "Auto" },
+  { id: "red", label: "Red" },
+  { id: "orange", label: "Orange" },
+  { id: "yellow", label: "Yellow" },
+  { id: "green", label: "Green" },
+  { id: "mint", label: "Mint" },
+  { id: "teal", label: "Teal" },
+  { id: "cyan", label: "Cyan" },
+  { id: "blue", label: "Blue" },
+  { id: "indigo", label: "Indigo" },
+  { id: "purple", label: "Purple" },
+  { id: "pink", label: "Pink" },
+  { id: "brown", label: "Brown" },
+];
+
 export interface Settings {
   focus_min: number;
   short_break_min: number;
@@ -22,6 +57,7 @@ export interface Settings {
   auto_start_focus: boolean;
   sound: boolean;
   notifications: boolean;
+  accent: AccentId;
 }
 
 export interface Todo {
@@ -87,8 +123,9 @@ class Store {
       invoke<TodoState>("get_todos"),
     ]);
     this.snapshot = snapshot;
-    this.settings = settings;
+    this.settings = { ...settings, accent: settings.accent ?? "auto" };
     this.applyTodos(todos);
+    this.applyTheme();
 
     await listen<TimerSnapshot>("timer://tick", (event) => {
       this.snapshot = event.payload;
@@ -117,10 +154,22 @@ class Store {
   async updateSettings(patch: Partial<Settings>): Promise<void> {
     if (!this.settings) return;
     this.settings = { ...this.settings, ...patch };
+    // Older builds may omit accent; keep UI safe.
+    if (!this.settings.accent) this.settings.accent = "auto";
     this.snapshot = await invoke<TimerSnapshot>("set_settings", {
       settings: this.settings,
     });
     this.emit();
+  }
+
+  /** Apply accent + phase CSS vars so dial and main button stay in sync. */
+  applyTheme(): void {
+    const app = document.getElementById("app");
+    if (!app) return;
+    const accent = this.settings?.accent ?? "auto";
+    const phase = this.snapshot?.phase ?? "focus";
+    app.dataset.accent = accent;
+    app.dataset.phase = phase;
   }
 
   async addTodo(title: string): Promise<void> {

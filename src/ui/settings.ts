@@ -1,6 +1,8 @@
 import { getVersion } from "@tauri-apps/api/app";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import {
+  ACCENT_OPTIONS,
+  AccentId,
   formatElapsed,
   phaseLabel,
   SessionRecord,
@@ -159,6 +161,20 @@ export class SettingsPanel {
           <div class="group">${toggleRows(BEHAVIOR_TOGGLES)}</div>
           <div class="group-label">Feedback</div>
           <div class="group">${toggleRows(FEEDBACK_TOGGLES)}</div>
+          <div class="group-label">Appearance</div>
+          <div class="group">
+            <div class="accent-row">
+              <span>Accent color</span>
+              <div class="accent-swatches" role="radiogroup" aria-label="Accent color">
+                ${ACCENT_OPTIONS.map(
+                  (a) => `
+                  <button type="button" class="accent-swatch" data-accent="${a.id}"
+                    role="radio" aria-checked="false" title="${a.label}" aria-label="${a.label}"></button>`,
+                ).join("")}
+              </div>
+              <div class="accent-hint">Colors the progress dial and the start/pause button. Auto follows Focus / Short / Long.</div>
+            </div>
+          </div>
           <div class="group-label">Session history <span class="history-count" id="history-count"></span></div>
           <div class="group history-group" id="history-list">
             <div class="history-empty">Loading…</div>
@@ -226,6 +242,14 @@ export class SettingsPanel {
         void store.updateSettings({ [key]: !current });
       });
     });
+
+    this.rootEl.querySelectorAll<HTMLButtonElement>(".accent-swatch").forEach((el) => {
+      el.addEventListener("click", () => {
+        const accent = el.dataset.accent as AccentId;
+        if (!accent || store.settings?.accent === accent) return;
+        void store.updateSettings({ accent });
+      });
+    });
   }
 
   private async refreshHistory(): Promise<void> {
@@ -288,6 +312,13 @@ export class SettingsPanel {
       const on = settings[key];
       el.classList.toggle("on", on);
       el.setAttribute("aria-checked", String(on));
+    });
+
+    const accent = settings.accent ?? "auto";
+    this.rootEl.querySelectorAll<HTMLButtonElement>(".accent-swatch").forEach((el) => {
+      const selected = el.dataset.accent === accent;
+      el.classList.toggle("selected", selected);
+      el.setAttribute("aria-checked", String(selected));
     });
   }
 }

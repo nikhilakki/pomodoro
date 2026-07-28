@@ -467,18 +467,159 @@ button {
   margin-top: 20px;
 }
 
-/* Phase accents */
+/* Accent: dial + main button (set on #app via data-accent / data-phase) */
 
-.phase-focus {
+#app[data-accent="auto"][data-phase="focus"],
+#app[data-accent="auto"]:not([data-phase]) {
   --phase-color: var(--red);
 }
 
-.phase-short_break {
+#app[data-accent="auto"][data-phase="short_break"] {
   --phase-color: var(--green);
 }
 
-.phase-long_break {
+#app[data-accent="auto"][data-phase="long_break"] {
   --phase-color: var(--blue);
+}
+
+#app[data-accent="red"] {
+  --phase-color: var(--red);
+}
+#app[data-accent="orange"] {
+  --phase-color: var(--orange);
+}
+#app[data-accent="yellow"] {
+  --phase-color: var(--yellow);
+}
+#app[data-accent="green"] {
+  --phase-color: var(--green);
+}
+#app[data-accent="mint"] {
+  --phase-color: var(--mint);
+}
+#app[data-accent="teal"] {
+  --phase-color: var(--teal);
+}
+#app[data-accent="cyan"] {
+  --phase-color: var(--cyan);
+}
+#app[data-accent="blue"] {
+  --phase-color: var(--blue);
+}
+#app[data-accent="indigo"] {
+  --phase-color: var(--indigo);
+}
+#app[data-accent="purple"] {
+  --phase-color: var(--purple);
+}
+#app[data-accent="pink"] {
+  --phase-color: var(--pink);
+}
+#app[data-accent="brown"] {
+  --phase-color: var(--brown);
+}
+
+/* Phase classes only tint the ring when accent is Auto */
+#app[data-accent="auto"] .phase-focus {
+  --phase-color: var(--red);
+}
+#app[data-accent="auto"] .phase-short_break {
+  --phase-color: var(--green);
+}
+#app[data-accent="auto"] .phase-long_break {
+  --phase-color: var(--blue);
+}
+
+/* ---------- Accent picker (settings) ---------- */
+
+.accent-row {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 12px 14px;
+  min-height: auto;
+}
+
+.accent-row > span {
+  font-size: 15px;
+}
+
+.accent-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.accent-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s;
+  position: relative;
+}
+
+.accent-swatch:hover {
+  transform: scale(1.08);
+}
+
+.accent-swatch.selected {
+  box-shadow:
+    0 0 0 2px var(--bg-cell),
+    0 0 0 3.5px var(--label);
+}
+
+.accent-swatch[data-accent="auto"] {
+  background: conic-gradient(
+    var(--red) 0deg 120deg,
+    var(--green) 120deg 240deg,
+    var(--blue) 240deg 360deg
+  );
+}
+
+.accent-swatch[data-accent="red"] {
+  background: var(--red);
+}
+.accent-swatch[data-accent="orange"] {
+  background: var(--orange);
+}
+.accent-swatch[data-accent="yellow"] {
+  background: var(--yellow);
+}
+.accent-swatch[data-accent="green"] {
+  background: var(--green);
+}
+.accent-swatch[data-accent="mint"] {
+  background: var(--mint);
+}
+.accent-swatch[data-accent="teal"] {
+  background: var(--teal);
+}
+.accent-swatch[data-accent="cyan"] {
+  background: var(--cyan);
+}
+.accent-swatch[data-accent="blue"] {
+  background: var(--blue);
+}
+.accent-swatch[data-accent="indigo"] {
+  background: var(--indigo);
+}
+.accent-swatch[data-accent="purple"] {
+  background: var(--purple);
+}
+.accent-swatch[data-accent="pink"] {
+  background: var(--pink);
+}
+.accent-swatch[data-accent="brown"] {
+  background: var(--brown);
+}
+
+.accent-hint {
+  font-size: 12px;
+  color: var(--label-tertiary);
+  line-height: 1.35;
 }
 
 /* ---------- Active task chip (main stage) ---------- */

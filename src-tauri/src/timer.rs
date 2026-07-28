@@ -62,6 +62,10 @@ pub struct Settings {
     pub auto_start_focus: bool,
     pub sound: bool,
     pub notifications: bool,
+    /// Accent for dial + main button. `"auto"` follows phase colors;
+    /// otherwise a predefined key: red, orange, yellow, green, mint, teal,
+    /// cyan, blue, indigo, purple, pink, brown.
+    pub accent: String,
 }
 
 impl Default for Settings {
@@ -75,6 +79,22 @@ impl Default for Settings {
             auto_start_focus: true,
             sound: true,
             notifications: true,
+            accent: "auto".into(),
+        }
+    }
+}
+
+/// Allowed accent keys (also mirrored on the frontend).
+pub const ACCENT_OPTIONS: &[&str] = &[
+    "auto", "red", "orange", "yellow", "green", "mint", "teal", "cyan", "blue",
+    "indigo", "purple", "pink", "brown",
+];
+
+impl Settings {
+    /// Normalize unknown accent values to `"auto"`.
+    pub fn sanitize(&mut self) {
+        if !ACCENT_OPTIONS.contains(&self.accent.as_str()) {
+            self.accent = "auto".into();
         }
     }
 }

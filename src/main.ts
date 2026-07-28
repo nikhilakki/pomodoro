@@ -105,6 +105,7 @@ async function bootstrap(): Promise<void> {
 
   function render(): void {
     if (!store.snapshot) return;
+    store.applyTheme();
     view.update(store.snapshot);
     segments.update(store.snapshot);
     controls.update(store.snapshot);

@@ -102,6 +102,8 @@ pub fn get_settings(state: State<'_, AppState>) -> Settings {
 
 #[tauri::command]
 pub fn set_settings(app: AppHandle, settings: Settings) -> TimerSnapshot {
+    let mut settings = settings;
+    settings.sanitize();
     {
         let state = app.state::<AppState>();
         *state.settings.lock().unwrap() = settings.clone();
