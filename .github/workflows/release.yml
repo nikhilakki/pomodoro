@@ -74,7 +74,9 @@ jobs:
             librsvg2-dev \
             patchelf \
             libxdo-dev \
-            libssl-dev
+            libssl-dev \
+            xdg-utils \
+            file
 
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
