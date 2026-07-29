@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none">
+  <circle cx="120" cy="120" r="100" stroke="rgba(120,120,128,0.22)" stroke-width="10"/>
+  <circle cx="120" cy="120" r="100" stroke="#FF3B30" stroke-width="10"
+    stroke-linecap="round" stroke-dasharray="440 628" transform="rotate(-90 120 120)"/>
+  <text x="120" y="128" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif"
+    font-size="42" font-weight="600" fill="currentColor" class="time">25:00</text>
+  <text x="120" y="158" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif"
+    font-size="13" font-weight="500" fill="#FF3B30" letter-spacing="0.08em">FOCUS</text>
+</svg>
