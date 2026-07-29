@@ -6,6 +6,39 @@ A minimal, iOS-native Pomodoro timer for macOS, Windows, and Linux.
 
 ## Install
 
+### macOS & Linux (one-liner)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+```
+
+The script detects your OS and CPU, then installs the right package:
+
+| Platform | Default package |
+| -------- | --------------- |
+| macOS | `.dmg` → `/Applications/Pomodoro.app` (clears Gatekeeper quarantine) |
+| Debian / Ubuntu / Mint / Pop!_OS | `.deb` |
+| Fedora / RHEL / Rocky / Alma / openSUSE | `.rpm` |
+| Other Linux | `.AppImage` → `~/.local/bin/pomodoro` |
+
+**Options** (environment variables):
+
+```bash
+# Pin a version
+POMODORO_VERSION=0.1.1 curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+
+# Force AppImage on Debian/Fedora
+POMODORO_FORMAT=appimage curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+
+# Custom AppImage install dir
+POMODORO_INSTALL_DIR=~/bin curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+
+# Preview without installing
+POMODORO_DRY_RUN=1 curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+```
+
+### Manual download
+
 1. Open the [latest release](https://github.com/nikhilakki/pomodoro/releases/latest).
 2. Download the installer for your OS and CPU:
 

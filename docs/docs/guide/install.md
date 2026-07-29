@@ -1,10 +1,49 @@
 # Install
 
-Download a prebuilt installer from the latest GitHub Release. You do not need Rust or Node.js to use the app.
+You do not need Rust or Node.js to use the app.
+
+## Quick install (macOS & Linux)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+```
+
+The installer:
+
+1. Detects OS (`macOS` / `Linux`) and CPU (`x86_64` / `aarch64` / `arm64`)
+2. Picks a package for your distro (`.dmg` / `.deb` / `.rpm` / AppImage)
+3. Downloads the matching asset from [GitHub Releases](https://github.com/nikhilakki/pomodoro/releases/latest)
+4. Installs it (and clears macOS quarantine when needed)
+
+| Platform | Default package |
+| -------- | --------------- |
+| macOS | `.dmg` → `/Applications/Pomodoro.app` |
+| Debian, Ubuntu, Mint, Pop!_OS, Elementary, … | `.deb` |
+| Fedora, RHEL, Rocky, Alma, Amazon Linux, openSUSE, … | `.rpm` |
+| Arch, Alpine, Gentoo, NixOS, Void, other | AppImage → `~/.local/bin/pomodoro` |
+
+### Options
+
+| Variable | Meaning |
+| -------- | ------- |
+| `POMODORO_VERSION` | Pin a version (e.g. `0.1.1`) instead of latest |
+| `POMODORO_FORMAT` | Force `deb`, `rpm`, or `appimage` |
+| `POMODORO_INSTALL_DIR` | AppImage destination (default `~/.local/bin`) |
+| `POMODORO_PREFIX` | macOS Applications folder (default `/Applications`) |
+| `POMODORO_NO_SUDO` | Set to `1` to refuse elevated installs (use AppImage) |
+| `POMODORO_DRY_RUN` | Set to `1` to print actions without installing |
+
+```bash
+# Pin version
+POMODORO_VERSION=0.1.1 curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+
+# Force portable AppImage (no root)
+POMODORO_FORMAT=appimage curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+```
+
+## Manual download
 
 **[→ Latest release](https://github.com/nikhilakki/pomodoro/releases/latest)**
-
-## Choose a file
 
 | Platform | Arch | Typical file |
 | -------- | ---- | ------------ |
@@ -21,6 +60,8 @@ Also available: `.app.tar.gz` archives on macOS for portable use.
 
 1. Open the `.dmg` and drag **Pomodoro** into **Applications**.
 2. Open the app from Applications.
+
+Or use the [quick install](#quick-install-macos--linux) script above.
 
 ### Gatekeeper (“damaged” app)
 
