@@ -177,46 +177,171 @@
   }
 }
 
-.hero-kicker {
-  margin: 0 0 0.85rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--vp-c-text-3);
-}
-
+/* Hero stack: headline, lede, install UI, CTAs. No kicker, no hint strip. */
 .hero-title {
   margin: 0;
-  font-size: clamp(2.6rem, 6vw, 4.1rem);
-  line-height: 1.05;
+  font-size: clamp(2.55rem, 5.6vw, 3.85rem);
+  line-height: 1.08;
   letter-spacing: -0.045em;
   font-weight: 650;
   color: var(--vp-c-text-1);
 }
 
-/* Italic emphasis: same family, room for descenders */
+/* Same family italic emphasis; reserve for descenders (y in simply) */
 .hero-title em {
   font-style: italic;
   font-weight: 550;
   color: var(--pom-focus);
-  padding-bottom: 0.08em;
+  padding-bottom: 0.1em;
   display: inline-block;
 }
 
 .hero-lede {
-  margin: 1.1rem 0 0;
-  max-width: 36ch;
+  margin: 1rem 0 0;
+  max-width: 34ch;
   font-size: 1.05rem;
   line-height: 1.55;
   color: var(--vp-c-text-2);
+}
+
+/* Terminal install strip: material, not a second eyebrow */
+.hero-install {
+  margin-top: 1.45rem;
+  max-width: min(100%, 34rem);
+}
+
+.hero-install-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-width: 0;
+  min-height: 48px;
+  border-radius: 12px;
+  border: 1px solid var(--vp-c-border);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, #fff 55%, var(--vp-c-bg-elv)) 0%,
+      var(--vp-c-bg-elv) 42%
+    );
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 55%, transparent) inset,
+    0 10px 28px color-mix(in srgb, #18181b 6%, transparent);
+  overflow: hidden;
+}
+
+.dark .hero-install-row {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, #fff 6%, var(--vp-c-bg-elv)) 0%,
+      color-mix(in srgb, #000 28%, var(--vp-c-bg-elv)) 100%
+    );
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 8%, transparent) inset,
+    0 14px 36px color-mix(in srgb, #000 35%, transparent);
+}
+
+.hero-install-prompt {
+  flex-shrink: 0;
+  padding: 0 0 0 0.95rem;
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--pom-focus);
+  user-select: none;
+}
+
+.hero-install-cmd {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0.8rem 0.65rem 0.8rem 0.45rem;
+  font-family: var(--vp-font-family-mono);
+  font-size: clamp(0.66rem, 1.55vw, 0.78rem);
+  line-height: 1.4;
+  color: var(--vp-c-text-1);
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  background: transparent;
+  border: 0;
+}
+
+.hero-install-cmd::-webkit-scrollbar {
+  height: 3px;
+}
+
+.hero-install-cmd::-webkit-scrollbar-thumb {
+  background: var(--vp-c-border);
+  border-radius: 999px;
+}
+
+.hero-install-copy {
+  flex-shrink: 0;
+  align-self: stretch;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0 1rem;
+  border: 0;
+  border-left: 1px solid var(--vp-c-border);
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 55%, transparent);
+  color: var(--vp-c-text-2);
+  font-family: var(--vp-font-family-base);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    color 0.15s var(--pom-ease),
+    background 0.15s var(--pom-ease);
+}
+
+.hero-install-copy:hover {
+  color: var(--vp-c-text-1);
+  background: var(--vp-c-brand-soft);
+}
+
+.hero-install-copy:active {
+  transform: scale(0.98);
+}
+
+.hero-install-copy:focus-visible {
+  outline: 2px solid var(--pom-focus);
+  outline-offset: -2px;
+}
+
+.hero-install-copy.is-copied {
+  color: var(--pom-break);
+  background: color-mix(in srgb, var(--pom-break) 12%, transparent);
+}
+
+@media (max-width: 520px) {
+  .hero-install-copy-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .hero-install-copy {
+    padding: 0 0.9rem;
+  }
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: 1.6rem;
+  margin-top: 1.15rem;
 }
 
 .btn {
@@ -484,22 +609,84 @@
   background: var(--vp-c-brand-soft);
 }
 
+/* Bento material variety: not six identical white cards */
 .tone-focus {
   background:
     linear-gradient(
-      145deg,
-      color-mix(in srgb, var(--pom-focus) 8%, var(--vp-c-bg-elv)),
-      var(--vp-c-bg-elv) 55%
+      135deg,
+      color-mix(in srgb, var(--pom-focus) 14%, var(--vp-c-bg-elv)),
+      var(--vp-c-bg-elv) 52%
+    );
+}
+
+.tone-focus .bento-icon {
+  color: var(--pom-focus);
+  background: color-mix(in srgb, var(--pom-focus) 16%, transparent);
+}
+
+.tone-task {
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--pom-long) 10%, var(--vp-c-bg-elv)),
+      var(--vp-c-bg-elv) 60%
+    );
+}
+
+.tone-task .bento-icon {
+  color: var(--pom-long);
+  background: color-mix(in srgb, var(--pom-long) 14%, transparent);
+}
+
+.tone-history {
+  background:
+    linear-gradient(
+      200deg,
+      color-mix(in srgb, var(--vp-c-bg-soft) 80%, var(--vp-c-bg-elv)),
+      var(--vp-c-bg-elv)
+    );
+}
+
+.tone-history .bento-icon {
+  color: var(--vp-c-text-1);
+  background: color-mix(in srgb, var(--vp-c-text-1) 8%, transparent);
+}
+
+.tone-break {
+  background:
+    linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--pom-break) 11%, var(--vp-c-bg-elv)),
+      var(--vp-c-bg-elv) 58%
     );
 }
 
 .tone-break .bento-icon {
   color: var(--pom-break);
-  background: color-mix(in srgb, var(--pom-break) 12%, transparent);
+  background: color-mix(in srgb, var(--pom-break) 14%, transparent);
 }
 
-.tone-focus .bento-icon {
+.tone-accent {
+  background: var(--vp-c-bg-elv);
+}
+
+.tone-accent .bento-icon {
   color: var(--pom-focus);
+  background: var(--vp-c-brand-soft);
+}
+
+.tone-local {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--vp-c-bg-soft) 90%, transparent),
+      var(--vp-c-bg-elv)
+    );
+}
+
+.tone-local .bento-icon {
+  color: var(--vp-c-text-2);
+  background: color-mix(in srgb, var(--vp-c-text-2) 10%, transparent);
 }
 
 /* Path cards */
@@ -594,17 +781,29 @@
   margin: 0 0 2.5rem;
   padding: 1.1rem 1.25rem;
   border-radius: var(--pom-radius);
-  border: 1px dashed var(--vp-c-border);
+  border: 1px solid var(--vp-c-border);
   background: var(--vp-c-bg-soft);
   text-align: center;
 }
 
 .stack-line {
   margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem 0.55rem;
   font-family: var(--vp-font-family-mono);
   font-size: 0.78rem;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   color: var(--vp-c-text-2);
+}
+
+.stack-sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--vp-c-text-3) 70%, transparent);
 }
 
 /* Author */
@@ -622,6 +821,11 @@
   margin: 0;
   color: var(--vp-c-text-2);
   font-size: 0.92rem;
+}
+
+.author-sep {
+  margin: 0 0.35rem;
+  color: var(--vp-c-text-3);
 }
 
 .author a {

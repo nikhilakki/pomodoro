@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { withBase } from "vitepress";
 import {
   PhTimer,
@@ -10,13 +11,50 @@ import {
   PhArrowRight,
   PhDownloadSimple,
   PhBookOpen,
+  PhCopy,
+  PhCheck,
 } from "@phosphor-icons/vue";
+
+const installCmd =
+  "curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash";
+
+const copied = ref(false);
+let copyReset: ReturnType<typeof setTimeout> | undefined;
+
+async function copyInstall() {
+  try {
+    await navigator.clipboard.writeText(installCmd);
+    flashCopied();
+  } catch {
+    const el = document.createElement("textarea");
+    el.value = installCmd;
+    el.setAttribute("readonly", "");
+    el.style.position = "fixed";
+    el.style.opacity = "0";
+    document.body.appendChild(el);
+    el.select();
+    try {
+      document.execCommand("copy");
+      flashCopied();
+    } finally {
+      document.body.removeChild(el);
+    }
+  }
+}
+
+function flashCopied() {
+  copied.value = true;
+  clearTimeout(copyReset);
+  copyReset = setTimeout(() => {
+    copied.value = false;
+  }, 1600);
+}
 
 const features = [
   {
     icon: PhTimer,
     title: "Classic cycles",
-    body: "Focus, short break, and long break. Defaults 25 / 5 / 15, long break every four focus sessions. All configurable.",
+    body: "Focus, short break, and long break. Defaults 25 / 5 / 15, long break every four focus sessions.",
     span: "wide",
     tone: "focus",
   },
@@ -25,18 +63,18 @@ const features = [
     title: "Tasks that count",
     body: "Start Focus from a todo. Pomodoros accumulate per task under the dial.",
     span: "half",
-    tone: "neutral",
+    tone: "task",
   },
   {
     icon: PhChartBar,
     title: "Session history",
-    body: "Local SQLite stats, a seven-day chart, and recent completed, skipped, or stopped sessions.",
+    body: "Local SQLite stats, a seven-day chart, and recent completed or skipped sessions.",
     span: "half",
-    tone: "neutral",
+    tone: "history",
   },
   {
     icon: PhTray,
-    title: "Tray + shortcuts",
+    title: "Tray and shortcuts",
     body: "Menu bar controls. Space to start or pause. Command-comma for Settings on macOS.",
     span: "third",
     tone: "break",
@@ -46,27 +84,39 @@ const features = [
     title: "Your accent",
     body: "Dial and main button color, or Auto by phase. Light and dark follow the system.",
     span: "third",
-    tone: "break",
+    tone: "accent",
   },
   {
     icon: PhLockSimple,
     title: "Local-first",
     body: "Settings, tasks, and history stay on your machine. No account. No cloud.",
     span: "third",
-    tone: "break",
+    tone: "local",
   },
 ];
 
 const platforms = [
-  { name: "macOS", detail: "arm64 + Intel · dmg" },
-  { name: "Windows", detail: "x64 + arm64 · msi / exe" },
-  { name: "Linux", detail: "x64 + arm64 · AppImage / deb / rpm" },
+  { name: "macOS", detail: "arm64, Intel, dmg" },
+  { name: "Windows", detail: "x64, arm64, msi / exe" },
+  { name: "Linux", detail: "x64, arm64, AppImage / deb / rpm" },
 ];
 
 const steps = [
-  { title: "Install", href: "/guide/install", blurb: "Pick the binary for your OS and CPU." },
-  { title: "Use it", href: "/guide/usage", blurb: "Timer, tasks, sessions, and settings." },
-  { title: "Build", href: "/develop/setup", blurb: "Clone, run from source, or ship a release." },
+  {
+    title: "Install",
+    href: "/guide/install",
+    blurb: "One-liner on macOS and Linux, or grab a package for your OS.",
+  },
+  {
+    title: "Use it",
+    href: "/guide/usage",
+    blurb: "Timer, tasks, sessions, and settings.",
+  },
+  {
+    title: "Build",
+    href: "/develop/setup",
+    blurb: "Clone, run from source, or ship a release.",
+  },
 ];
 </script>
 
@@ -74,15 +124,42 @@ const steps = [
   <div class="home">
     <section class="hero">
       <div class="hero-copy">
-        <p class="hero-kicker">Open source · Desktop</p>
         <h1 class="hero-title">
           Focus,<br />
           <em>simply.</em>
         </h1>
         <p class="hero-lede">
-          A minimal Pomodoro timer for macOS, Windows, and Linux. Local-first,
-          iOS-native UI, zero accounts.
+          Minimal Pomodoro for macOS, Windows, and Linux. Local-first, no
+          accounts.
         </p>
+
+        <div class="hero-install" aria-label="Install on macOS or Linux">
+          <div class="hero-install-row">
+            <span class="hero-install-prompt" aria-hidden="true">$</span>
+            <code class="hero-install-cmd" :title="installCmd">{{
+              installCmd
+            }}</code>
+            <button
+              type="button"
+              class="hero-install-copy"
+              :class="{ 'is-copied': copied }"
+              :aria-label="copied ? 'Copied' : 'Copy install command'"
+              @click="copyInstall"
+            >
+              <PhCheck
+                v-if="copied"
+                :size="16"
+                weight="bold"
+                aria-hidden="true"
+              />
+              <PhCopy v-else :size="16" weight="bold" aria-hidden="true" />
+              <span class="hero-install-copy-label">{{
+                copied ? "Copied" : "Copy"
+              }}</span>
+            </button>
+          </div>
+        </div>
+
         <div class="hero-actions">
           <a
             class="btn btn-primary"
@@ -123,8 +200,7 @@ const steps = [
       <div class="section-head">
         <h2 id="features-heading">Built for deep work</h2>
         <p>
-          Everything you need for a classic Pomodoro loop, without the noise of
-          a cloud suite.
+          Classic Pomodoro loop without the noise of a cloud suite.
         </p>
       </div>
 
@@ -166,7 +242,17 @@ const steps = [
 
     <section class="stack-band" aria-label="Tech stack">
       <p class="stack-line">
-        Rust timer · Tauri v2 · TypeScript · Vite · SQLite · local store
+        <span>Rust timer</span>
+        <span class="stack-sep" aria-hidden="true" />
+        <span>Tauri v2</span>
+        <span class="stack-sep" aria-hidden="true" />
+        <span>TypeScript</span>
+        <span class="stack-sep" aria-hidden="true" />
+        <span>Vite</span>
+        <span class="stack-sep" aria-hidden="true" />
+        <span>SQLite</span>
+        <span class="stack-sep" aria-hidden="true" />
+        <span>local store</span>
       </p>
     </section>
 
@@ -174,9 +260,10 @@ const steps = [
       <p>
         By
         <a href="https://github.com/nikhilakki" rel="noreferrer">nikhilakki</a>
-        ·
+        <span class="author-sep" aria-hidden="true">/</span>
         <a href="https://x.com/nik_akki" rel="noreferrer">@nik_akki</a>
-        · MIT
+        <span class="author-sep" aria-hidden="true">/</span>
+        MIT
       </p>
       <a
         class="btn btn-ghost btn-sm"
