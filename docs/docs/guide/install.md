@@ -5,7 +5,7 @@ You do not need Rust or Node.js to use the app.
 ## Quick install (macOS & Linux)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+curl -fsSL https://atmd.cc/pomodoro | bash
 ```
 
 The installer:
@@ -35,10 +35,10 @@ The installer:
 
 ```bash
 # Pin version
-POMODORO_VERSION=0.1.1 curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+POMODORO_VERSION=0.1.1 curl -fsSL https://atmd.cc/pomodoro | bash
 
 # Force portable AppImage (no root)
-POMODORO_FORMAT=appimage curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+POMODORO_FORMAT=appimage curl -fsSL https://atmd.cc/pomodoro | bash
 ```
 
 ## Manual download

@@ -9,7 +9,7 @@ A minimal, iOS-native Pomodoro timer for macOS, Windows, and Linux.
 ### macOS & Linux (one-liner)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+curl -fsSL https://atmd.cc/pomodoro | bash
 ```
 
 The script detects your OS and CPU, then installs the right package:
@@ -25,16 +25,16 @@ The script detects your OS and CPU, then installs the right package:
 
 ```bash
 # Pin a version
-POMODORO_VERSION=0.1.1 curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+POMODORO_VERSION=0.1.1 curl -fsSL https://atmd.cc/pomodoro | bash
 
 # Force AppImage on Debian/Fedora
-POMODORO_FORMAT=appimage curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+POMODORO_FORMAT=appimage curl -fsSL https://atmd.cc/pomodoro | bash
 
 # Custom AppImage install dir
-POMODORO_INSTALL_DIR=~/bin curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+POMODORO_INSTALL_DIR=~/bin curl -fsSL https://atmd.cc/pomodoro | bash
 
 # Preview without installing
-POMODORO_DRY_RUN=1 curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+POMODORO_DRY_RUN=1 curl -fsSL https://atmd.cc/pomodoro | bash
 ```
 
 ### Manual download

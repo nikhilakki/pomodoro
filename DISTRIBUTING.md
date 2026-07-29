@@ -37,7 +37,7 @@ git push origin v0.2.0
 Users download installers from the [Releases](https://github.com/nikhilakki/pomodoro/releases) page, or use the one-liner installer:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+curl -fsSL https://atmd.cc/pomodoro | bash
 ```
 
 [`install.sh`](install.sh) detects OS/CPU and installs `.dmg` (macOS), `.deb` / `.rpm` (package managers), or AppImage (portable Linux). Keep asset naming stable when changing Tauri bundle config so the script keeps matching release files.

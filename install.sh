@@ -3,7 +3,7 @@
 #
 # Install the latest release (or a pinned version) from GitHub.
 #
-#   curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash
+#   curl -fsSL https://atmd.cc/pomodoro | bash
 #
 # Options (env vars):
 #   POMODORO_VERSION   Tag without leading v, e.g. 0.1.1  (default: latest)
@@ -84,7 +84,7 @@ run_priv() {
   if [[ "${POMODORO_NO_SUDO:-0}" == "1" ]]; then
     die "This step needs elevated privileges, but POMODORO_NO_SUDO=1 is set.
 Install an AppImage instead:
-  POMODORO_FORMAT=appimage curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | bash"
+  POMODORO_FORMAT=appimage curl -fsSL https://atmd.cc/pomodoro | bash"
   fi
   if [[ "$(id -u)" -eq 0 ]]; then
     "$@"
@@ -412,7 +412,7 @@ install_linux_deb() {
     }
   else
     die "No dpkg/apt found. Force AppImage:
-  POMODORO_FORMAT=appimage curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | bash"
+  POMODORO_FORMAT=appimage curl -fsSL https://atmd.cc/pomodoro | bash"
   fi
 
   ok "Installed ${PRODUCT_NAME} (.deb)"
@@ -448,7 +448,7 @@ install_linux_rpm() {
     run_priv rpm -Uvh "${dest}"
   else
     die "No rpm/dnf/yum/zypper found. Force AppImage:
-  POMODORO_FORMAT=appimage curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | bash"
+  POMODORO_FORMAT=appimage curl -fsSL https://atmd.cc/pomodoro | bash"
   fi
 
   ok "Installed ${PRODUCT_NAME} (.rpm)"

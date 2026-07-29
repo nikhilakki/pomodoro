@@ -16,7 +16,7 @@ import {
 } from "@phosphor-icons/vue";
 
 const installCmd =
-  "curl -fsSL https://raw.githubusercontent.com/nikhilakki/pomodoro/main/install.sh | bash";
+  "curl -fsSL https://atmd.cc/pomodoro | bash";
 
 const copied = ref(false);
 let copyReset: ReturnType<typeof setTimeout> | undefined;
