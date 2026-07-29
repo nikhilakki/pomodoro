@@ -15,7 +15,7 @@ pnpm install
 pnpm dev
 ```
 
-Open the URL printed in the terminal (usually `http://localhost:5173/pomodoro-docs/`).
+Open the URL printed in the terminal (usually `http://localhost:5173/`).
 
 ## Build
 
@@ -49,21 +49,22 @@ On every push to `main` that touches `docs/**` (or via **workflow_dispatch**), [
    - **Source:** Deploy from a branch
    - **Branch:** `main` / `/` (root)
 4. After the first successful deploy, the site is at  
-   `https://nikhilakki.github.io/pomodoro-docs/`
+   `https://pomodoro.nikhilakki.com/` (custom domain)  
+   or `https://nikhilakki.github.io/pomodoro-docs/` if DNS is not set.
 
 > The `pomodoro-docs` repo should only contain the generated site. Edit content here in `pomodoro`, not in that hosting repo.
 
-### Base path
+### Base path & custom domain
 
-`docs/.vitepress/config.ts` sets `base: '/pomodoro-docs/'` for project GitHub Pages.
+`docs/.vitepress/config.ts` uses `base: '/'` for the custom domain **pomodoro.nikhilakki.com**.
 
-If you use a **custom domain** or host at the site root, change:
+The deploy workflow writes a `CNAME` file (`pomodoro.nikhilakki.com`) on each publish so GitHub Pages keeps the domain across orphan deploys.
+
+If you drop the custom domain and host only at `https://<user>.github.io/pomodoro-docs/`, set:
 
 ```ts
-base: '/',
+base: '/pomodoro-docs/',
 ```
-
-…and update any absolute links if needed.
 
 ## Content map
 

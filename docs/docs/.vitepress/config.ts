@@ -1,8 +1,8 @@
 import { defineConfig } from "vitepress";
 
-// Project Pages: https://<user>.github.io/pomodoro-docs/
-// For a custom domain or root hosting, set base to '/'.
-const base = "/pomodoro-docs/";
+// Custom domain: https://pomodoro.nikhilakki.com/
+// Project Pages path (nikhilakki.github.io/pomodoro-docs/) needs base: '/pomodoro-docs/'.
+const base = "/";
 
 export default defineConfig({
   title: "Pomodoro",
