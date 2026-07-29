@@ -51,6 +51,8 @@ jobs:
           external_repository: nikhilakki/pomodoro-docs
           publish_branch: main
           publish_dir: docs/docs/.vitepress/dist
+          # Keep custom domain across force-orphan publishes.
+          cname: pomodoro.nikhilakki.com
           # Single-commit history for a static hosting repo.
           force_orphan: true
           user_name: github-actions[bot]
