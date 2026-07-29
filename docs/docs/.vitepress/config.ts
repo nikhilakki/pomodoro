@@ -82,7 +82,7 @@ export default defineConfig({
 
     editLink: {
       pattern:
-        "https://github.com/nikhilakki/pomodoro-docs/edit/main/docs/:path",
+        "https://github.com/nikhilakki/pomodoro/edit/main/docs/docs/:path",
       text: "Edit this page on GitHub",
     },
 

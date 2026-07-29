@@ -1,0 +1,58 @@
+name: Deploy docs to pomodoro-docs
+
+# Builds the VitePress site from docs/ and publishes static output to
+# nikhilakki/pomodoro-docs for GitHub Pages hosting.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - ".github/workflows/deploy-docs.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-docs
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: docs/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: docs
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        working-directory: docs
+        run: pnpm build
+
+      - name: Publish to nikhilakki/pomodoro-docs
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          # Fine-grained PAT or classic token with contents:write on pomodoro-docs.
+          personal_token: ${{ secrets.POMODORO_DOCS_DEPLOY_TOKEN }}
+          external_repository: nikhilakki/pomodoro-docs
+          publish_branch: main
+          publish_dir: docs/docs/.vitepress/dist
+          # Single-commit history for a static hosting repo.
+          force_orphan: true
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
+          commit_message: "Deploy docs from nikhilakki/pomodoro@${{ github.sha }}"

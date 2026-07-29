@@ -1,10 +1,16 @@
 # Pomodoro Docs
 
-Documentation site for [nikhilakki/pomodoro](https://github.com/nikhilakki/pomodoro), built with [VitePress](https://vitepress.dev) and published to GitHub Pages.
+Documentation site for [nikhilakki/pomodoro](https://github.com/nikhilakki/pomodoro), built with [VitePress](https://vitepress.dev).
+
+**Source of truth:** this folder (`docs/`) in the app repo.  
+**Hosted site:** [nikhilakki.github.io/pomodoro-docs](https://nikhilakki.github.io/pomodoro-docs/) via the [nikhilakki/pomodoro-docs](https://github.com/nikhilakki/pomodoro-docs) repository (build output only).
 
 ## Local development
 
+From the repo root:
+
 ```bash
+cd docs
 pnpm install
 pnpm dev
 ```
@@ -14,10 +20,11 @@ Open the URL printed in the terminal (usually `http://localhost:5173/pomodoro-do
 ## Build
 
 ```bash
+cd docs
 pnpm build
 ```
 
-Static output lands in `docs/.vitepress/dist`.
+Static output lands in `docs/.vitepress/dist` (relative to this package, i.e. `docs/docs/.vitepress/dist` from the monorepo root).
 
 ## Preview production build
 
@@ -25,12 +32,26 @@ Static output lands in `docs/.vitepress/dist`.
 pnpm build && pnpm preview
 ```
 
-## GitHub Pages setup
+## Publishing to GitHub Pages
 
-1. Push this repo to GitHub (e.g. `nikhilakki/pomodoro-docs`).
-2. **Settings → Pages → Build and deployment → Source:** GitHub Actions.
-3. The workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) builds and deploys on every push to `main`.
-4. Site URL (project pages): `https://<user>.github.io/pomodoro-docs/`
+On every push to `main` that touches `docs/**` (or via **workflow_dispatch**), [`.github/workflows/deploy-docs.yml`](../.github/workflows/deploy-docs.yml):
+
+1. Builds VitePress from this package.
+2. Force-publishes the static files to `nikhilakki/pomodoro-docs` on `main`.
+
+### One-time setup
+
+1. Create a **fine-grained personal access token** (or classic PAT) with **Contents: Read and write** on `nikhilakki/pomodoro-docs`.
+2. In the **pomodoro** repo: **Settings → Secrets and variables → Actions → New repository secret**
+   - Name: `POMODORO_DOCS_DEPLOY_TOKEN`
+   - Value: the token
+3. In **pomodoro-docs**: **Settings → Pages**
+   - **Source:** Deploy from a branch
+   - **Branch:** `main` / `/` (root)
+4. After the first successful deploy, the site is at  
+   `https://nikhilakki.github.io/pomodoro-docs/`
+
+> The `pomodoro-docs` repo should only contain the generated site. Edit content here in `pomodoro`, not in that hosting repo.
 
 ### Base path
 
