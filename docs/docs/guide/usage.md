@@ -34,8 +34,13 @@ Open **Tasks** with the list icon in the title bar.
 
 1. Type a title and add a task.
 2. Press **play** on a row to start **Focus** on that task (sets it active and starts the timer when appropriate).
-3. When a Focus phase completes while a task is active, its pomodoro count increments.
-4. The active task appears as a chip under the dial - click it to reopen Tasks.
+3. Tap a task title to **edit** — rename, set a due date and time, or clear the due date, then **Save**.
+4. When a Focus phase completes while a task is active, its pomodoro count increments.
+5. The active task appears as a chip under the dial - click it to reopen Tasks.
+
+Due dates show under the title. Open tasks turn **soon** within 24 hours and **overdue** after the deadline.
+
+With **Settings → Notifications** enabled, the app sends native alerts when a task is added and when a due date is approaching (about 24 hours before, 1 hour before, and at the due time). Completed tasks do not get due reminders. Reminders run while the app is open in the tray.
 
 Mark tasks complete or delete them from the sheet. Data is stored locally (see [Privacy](/guide/privacy)).
 
@@ -62,7 +67,7 @@ Open **Settings** with the gear icon, or **⌘,** on macOS.
 | Auto-start breaks | Start the next break when focus ends |
 | Auto-start focus | Start focus when a break ends |
 | Sound | Two-tone completion chime |
-| Notifications | Native OS notification on phase complete |
+| Notifications | Native OS notifications on phase complete, task added, and due dates |
 | Accent color | Dial + main button color, or **Auto** by phase |
 
 ## Tray

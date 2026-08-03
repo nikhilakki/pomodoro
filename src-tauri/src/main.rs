@@ -41,6 +41,7 @@ fn main() {
             commands::set_settings,
             commands::get_todos,
             commands::add_todo,
+            commands::update_todo,
             commands::delete_todo,
             commands::set_todo_completed,
             commands::set_active_todo,
@@ -123,10 +124,12 @@ fn main() {
 
 /// Authoritative 1s ticker. Emits `timer://tick` snapshots to the frontend
 /// and `timer://phase-complete` (+ native notification) on phase rollover.
+/// Also polls task due-date reminders every 15s when notifications are on.
 fn spawn_tick_loop(app: AppHandle) {
     tauri::async_runtime::spawn(async move {
         let mut interval = tokio::time::interval(Duration::from_secs(1));
         let mut last_status = String::new();
+        let mut due_poll_counter: u8 = 0;
 
         loop {
             interval.tick().await;
@@ -180,6 +183,32 @@ fn spawn_tick_loop(app: AppHandle) {
                     "timer://phase-complete",
                     serde_json::json!({ "to": to.as_str() }),
                 );
+            }
+
+            // Due-date reminders (every 15s). Flags only advance when
+            // notifications are enabled so toggling on later still delivers.
+            due_poll_counter = due_poll_counter.wrapping_add(1);
+            if notifications_on && due_poll_counter % 15 == 0 {
+                let now_ms = std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .map(|d| d.as_millis() as u64)
+                    .unwrap_or(0);
+                let reminders = {
+                    let mut todos = state.todos.lock().unwrap();
+                    let r = todos.poll_due_reminders(now_ms);
+                    if !r.is_empty() {
+                        todos::persist_and_emit(&app, &todos);
+                    }
+                    r
+                };
+                for rem in reminders {
+                    let _ = app
+                        .notification()
+                        .builder()
+                        .title(&rem.title)
+                        .body(&rem.body)
+                        .show();
+                }
             }
         }
     });

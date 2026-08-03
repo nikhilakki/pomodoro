@@ -3,6 +3,7 @@ use crate::timer::{Event, Phase, Settings, TimerSnapshot};
 use crate::todos::{self, TodoState};
 use crate::{sessions, AppState};
 use tauri::{AppHandle, Emitter, Manager, State};
+use tauri_plugin_notification::NotificationExt;
 use tauri_plugin_store::StoreExt;
 
 /// Applies an event to the timer, then syncs tray + frontend + session log.
@@ -128,8 +129,39 @@ pub fn get_todos(state: State<'_, AppState>) -> TodoState {
 
 #[tauri::command]
 pub fn add_todo(app: AppHandle, title: String) -> Result<TodoState, String> {
+    let (state, added_title) = todos::with_todos_mut(&app, |todos| {
+        let todo = todos.add(title)?;
+        let added_title = todo.title.clone();
+        Ok::<_, String>((todos.clone(), added_title))
+    })?;
+
+    let notifications_on = app
+        .state::<AppState>()
+        .settings
+        .lock()
+        .unwrap()
+        .notifications;
+    if notifications_on {
+        let _ = app
+            .notification()
+            .builder()
+            .title("Task added")
+            .body(&added_title)
+            .show();
+    }
+
+    Ok(state)
+}
+
+#[tauri::command]
+pub fn update_todo(
+    app: AppHandle,
+    id: String,
+    title: String,
+    due_at: Option<u64>,
+) -> Result<TodoState, String> {
     todos::with_todos_mut(&app, |todos| {
-        todos.add(title)?;
+        todos.update(&id, title, due_at)?;
         Ok(todos.clone())
     })
 }

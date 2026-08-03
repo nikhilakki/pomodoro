@@ -2,6 +2,18 @@
 
 Release notes for the desktop app. Downloads: [GitHub Releases](https://github.com/nikhilakki/pomodoro/releases).
 
+## [0.2.0] (2026-08-03)
+
+### Features
+
+- **Edit tasks** — tap a task title to rename it inline
+- **Due dates** — set, change, or clear a date and time on any task; overdue / soon styling in the list
+- **Task notifications** — with Notifications on: alert when a task is added, and when a due date is approaching (24h, 1h, and at due)
+
+### Fixed
+
+- Task editor no longer resets every second while the timer ticks (title and due picker stay usable)
+
 ## [0.1.1] (2026-07-28)
 
 ### Fixed

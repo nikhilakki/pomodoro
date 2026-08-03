@@ -786,7 +786,20 @@ button {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 2px;
+  padding: 2px 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.todo-body:hover .todo-title {
+  color: var(--blue);
 }
 
 .todo-title {
@@ -795,6 +808,15 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 100%;
+}
+
+.todo-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
 }
 
 .todo-row.is-done .todo-title {
@@ -808,6 +830,150 @@ button {
   font-variant-numeric: tabular-nums;
   color: var(--label-secondary);
   white-space: nowrap;
+}
+
+.todo-due {
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--label-tertiary);
+  white-space: nowrap;
+}
+
+.todo-due.is-soon {
+  color: var(--orange);
+}
+
+.todo-due.is-overdue {
+  color: var(--red);
+}
+
+.todo-row.is-editing {
+  display: block;
+  padding: 10px 12px 12px;
+  align-items: stretch;
+}
+
+.todo-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.todo-edit-title {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 10px;
+  background: var(--bg-elevated, var(--bg-cell));
+  color: var(--label);
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+  box-shadow: inset 0 0 0 0.5px var(--separator);
+  pointer-events: auto;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.todo-edit-title:focus {
+  box-shadow: inset 0 0 0 1.5px var(--blue);
+}
+
+.todo-edit-due-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.todo-edit-due-label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--label-secondary);
+}
+
+.todo-edit-due {
+  width: 100%;
+  min-width: 0;
+  height: 36px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 10px;
+  background: var(--bg-elevated, var(--bg-cell));
+  color: var(--label);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  box-shadow: inset 0 0 0 0.5px var(--separator);
+  color-scheme: light dark;
+  pointer-events: auto;
+  cursor: text;
+}
+
+.todo-edit-due:focus {
+  box-shadow: inset 0 0 0 1.5px var(--blue);
+}
+
+/* WebKit datetime-local: keep calendar affordance clickable */
+.todo-edit-due::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.todo-edit-clear-due {
+  flex-shrink: 0;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--red);
+  background: transparent;
+}
+
+.todo-edit-clear-due:hover {
+  background: var(--fill-tertiary);
+}
+
+.todo-edit-clear-due[hidden] {
+  display: none;
+}
+
+.todo-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.todo-edit-cancel,
+.todo-edit-save {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.todo-edit-cancel {
+  background: var(--fill-tertiary);
+  color: var(--label);
+}
+
+.todo-edit-save {
+  background: var(--blue);
+  color: #fff;
+}
+
+.todo-edit-save:active,
+.todo-edit-cancel:active {
+  opacity: 0.85;
 }
 
 .todo-play,

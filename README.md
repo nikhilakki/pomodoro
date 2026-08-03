@@ -77,7 +77,7 @@ chmod +x Pomodoro_*.AppImage
 ## What you can do
 
 - Run **Focus**, **Short Break**, and **Long Break** cycles (defaults 25 / 5 / 15 minutes; long break every 4 focus sessions)
-- **Tasks** — add todos, start a focus session from a task, track pomodoros per task
+- **Tasks** — add and edit todos, set due dates, get reminders as deadlines approach, start a focus session from a task, track pomodoros per task
 - **Sessions** — view focus totals, a 7-day chart, and recent history (chart icon in the title bar, or **Settings → Sessions**)
 - Control the timer from the window or the **menu bar tray**
 - Get a notification and optional chime when a phase finishes
@@ -97,7 +97,9 @@ chmod +x Pomodoro_*.AppImage
 
 1. Open **Tasks** (list icon in the title bar).
 2. Add a task, then press play on a row to start Focus on that task.
-3. Finished Focus sessions count toward that task’s pomodoro total.
+3. Tap a task title to edit it, set or clear a due date, then Save.
+4. Finished Focus sessions count toward that task’s pomodoro total.
+5. With **Notifications** on, the app alerts when a task is added and when a due date is approaching (24h, 1h, and at due).
 4. The active task appears under the dial while set.
 
 ### Sessions history

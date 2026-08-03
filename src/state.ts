@@ -66,6 +66,8 @@ export interface Todo {
   completed: boolean;
   pomodoros: number;
   created_at: number;
+  /** Unix ms deadline; null/undefined = none. */
+  due_at?: number | null;
 }
 
 export interface TodoState {
@@ -178,6 +180,22 @@ class Store {
     this.emit();
   }
 
+  /** Replace title and due date. Pass `due_at: null` to clear the deadline. */
+  async updateTodo(
+    id: string,
+    title: string,
+    due_at: number | null,
+  ): Promise<void> {
+    const state = await invoke<TodoState>("update_todo", {
+      id,
+      title,
+      // Tauri IPC maps camelCase JS keys → snake_case Rust params.
+      dueAt: due_at,
+    });
+    this.applyTodos(state);
+    this.emit();
+  }
+
   async deleteTodo(id: string): Promise<void> {
     const state = await invoke<TodoState>("delete_todo", { id });
     this.applyTodos(state);
@@ -244,4 +262,40 @@ export function phaseLabel(phase: Phase): string {
     case "long_break":
       return "Long Break";
   }
+}
+
+const MS_DAY = 24 * 60 * 60 * 1000;
+
+/** Short local due label, e.g. "Apr 3, 3:00 PM". */
+export function formatDue(ms: number): string {
+  const d = new Date(ms);
+  return d.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+export type DueUrgency = "overdue" | "soon" | "normal";
+
+export function dueUrgency(dueAt: number, now = Date.now()): DueUrgency {
+  if (now > dueAt) return "overdue";
+  if (dueAt - now <= MS_DAY) return "soon";
+  return "normal";
+}
+
+/** Value for `<input type="datetime-local">` from unix ms. */
+export function toDatetimeLocalValue(ms: number): string {
+  const d = new Date(ms);
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/** Parse datetime-local string to unix ms; null if empty/invalid. */
+export function fromDatetimeLocalValue(value: string): number | null {
+  const v = value.trim();
+  if (!v) return null;
+  const ms = new Date(v).getTime();
+  return Number.isFinite(ms) ? ms : null;
 }
